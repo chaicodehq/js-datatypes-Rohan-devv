@@ -42,5 +42,39 @@
  *   // => "INVALID PASS"
  */
 export function generateLocalPass(passenger) {
-  // Your code here
+// Validation:
+//  *   - Agar passenger object nahi hai ya null hai, return "INVALID PASS"
+//  *   - Agar koi required field (name, from, to, classType) missing hai
+//  *     ya empty string hai, return "INVALID PASS"
+//  *   - Agar classType "first" ya "second" nahi hai, return "INVALID PASS"
+
+    if(typeof passenger !== 'object'|| passenger === null) return "INVALID PASS"
+
+    const {name, form, to, classType} = passenger
+    if(!name || !from || !to || !classType) return "INVALID PASS" // object destructuring
+
+    classType = classType.toLowerCase()
+    if(classType !== 'first' || classType !== 'second') return "INVALID PASS"
+
+    function titleCase(str){
+      return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+    }
+
+    const passId = 
+    classType.charAt(0).toUpperCase() + 
+    from.slice(0,3).toUpperCase() +
+    to.slice(0,3).toUpperCase()
+
+    // 6️⃣ Final formatted pass
+  return `MUMBAI LOCAL PASS
+---
+Name: ${name.toUpperCase()}
+From: ${toTitleCase(from)}
+To: ${toTitleCase(to)}
+Class: ${classLower.toUpperCase()}
+Pass ID: ${passId}`;
+
+
+
+
 }

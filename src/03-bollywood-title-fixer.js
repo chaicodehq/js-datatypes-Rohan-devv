@@ -30,5 +30,29 @@
  *   // => "Dil ka Kya Kare"
  */
 export function fixBollywoodTitle(title) {
-  // Your code here
+  if(typeof title !== "string") return ""
+  title = title.trim().replace(/\s+/g, " ") // \s whitespace ,g matlab global flag sabhi mein hoga vrna pehle hoke reh jayega 
+
+  if(title.length === 0 ) return ""
+
+
+  const smallWords = ["ka", "ki", "ke", "se", "aur", "ya", "the", "of", "in", "a", "an"]
+
+  const words = title.split(" ")
+
+  const formatted = words.map((word, index) => {
+    const lowerWord = word.toLowerCase()
+
+    if(index === 0){
+      return lowerWord.charAt(0).toUpperCase() + lowerWord.slice(1)
+    }
+
+    if(smallWords.includes(lowerWord)){
+      return lowerWord
+    }
+     
+    return lowerWord.charAt(0).toUpperCase() + lowerWord.slice(1)
+
+  })
+  return formatted.join(" ")
 }

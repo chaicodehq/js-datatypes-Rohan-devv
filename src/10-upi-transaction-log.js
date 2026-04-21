@@ -48,4 +48,86 @@
  */
 export function analyzeUPITransactions(transactions) {
   // Your code here
+
+  if(!Array.isArray(transactions) || transactions.length === 0){
+    return null
+  } 
+
+  const validTransactions =  transactions.filter((txn) => {
+     return txn.amount > 0
+      && typeof txn.amount === "number"
+      && (txn.type === "credit" || txn.type === "debit")
+  })
+
+  const totalCredit = validTransactions.reduce((acc, txn)=>{    
+      if(txn.type === "credit"){
+        return  acc + txn.amount 
+      }
+
+      return acc//Reduce me accumulator (acc) hi return hota hai, tu alag total bana raha hai → unnecessary + wrong
+      // Bas acc ko hi update + return karo
+
+  },0)
+
+  const totalDebit = validTransactions
+  .filter((t) => t.type === "debit ")
+  .reduce((acc, txn) => acc + txn.amount,0)
+
+  const netBalance = totalCredit - totalDebit
+
+  const transactionCount = validTransactions.length
+
+  const avgTransaction = Math.round((validTransactions.reduce((acc, txn) => acc + txn.amount),0)/transactionCount)
+
+
+  const highestTransaction = validTransactions.reduce((max, txn) => {
+    if(txn.amount > max.amount){
+      return t
+    }
+    return max 
+
+    //Jo tu reduce me return karta hai → wahi next iteration ka max (acc) ban jata hai
+    // max = returned value
+    // Reduce = “return karo → wahi next acc ban jayega”
+  })
+
+  const categoryBreakdown = validTransactions.reduce((acc,txn) => {
+    if(!acc[txn.category]){
+      acc[txn.category] = 0
+    } 
+      
+    acc[txn.category] += txn.amount
+    return acc
+  }, {})
+
+  const freqMap = {}
+  const frequentContact = ""
+
+  for(let i=0; i<validTransactions.length; i++){
+
+    const person = validTransactions[i].to
+    freqMap[person] = (freqMap[person]||0) + 1
+
+    if(!frequentContact && freqMap[person] > freqMap[frequentContact]){
+      frequentContact = person
+    }
+
+
+  }
+
+  const allAbove100 = validTransactions.every((txn) => txn.amount > 100)
+
+  const hasLargeTransaction = validTransactions.some((txn) => txn.amount >= 500 )
+
+
+
+  
+
 }
+
+
+
+
+
+
+

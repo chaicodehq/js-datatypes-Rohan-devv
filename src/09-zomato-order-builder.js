@@ -46,5 +46,82 @@
  *   // grandTotal: 1000 + 0 + 50 - 150 = 900
  */
 export function buildZomatoOrder(cart, coupon) {
-  // Your code here
+  if (!Array.isArray(cart) || cart.length === 0) return null;
+
+  const validItems = cart.filter((item) => item.qty > 0);
+
+  
+
+  const items = validItems.map((item) => {
+    const addonTotal = (item.addons || []).reduce((acc, addOnItem) => {
+      return acc + parseFloat(addOnItem.split(":")[1]) || 0;
+    }, 0);
+
+    const itemTotal = (item.price + addonTotal) * item.qty;
+
+    return {
+      name: item.name,
+      qty: item.qty,
+      basePrice: item.price,
+      addonTotal,
+      itemTotal,
+    };
+  });
+
+  // - subtotal: sum of all itemTotals 
+  
+  const subtotal = items.reduce((acc, item) => {
+    return acc + item.itemTotal
+  },0)
+
+  // STEP 4: delivery fee
+  let deliveryFee;
+  if (subtotal >= 1000) deliveryFee = 0;
+  else if (subtotal >= 500) deliveryFee = 15;
+  else deliveryFee = 30;
+
+  // STEP 5: GST
+  const gst = parseFloat((subtotal * 0.05).toFixed(2));
+
+  // STEP 6: coupon handling
+  let discount = 0;
+  let finalDeliveryFee = deliveryFee;
+
+  if (typeof coupon === "string") {
+    const code = coupon.toLowerCase();
+
+    if (code === "first50") {
+      discount = Math.min(subtotal * 0.5, 150);
+    } 
+    else if (code === "flat100") {
+      discount = 100;
+    } 
+    else if (code === "freeship") {
+      discount = deliveryFee;
+      finalDeliveryFee = 0;
+    }
+  }
+
+  // STEP 7: grand total
+  let grandTotal = subtotal + finalDeliveryFee + gst - discount;
+  grandTotal = Math.max(0, grandTotal);
+  grandTotal = parseFloat(grandTotal.toFixed(2));
+
+
+  return {
+    items,
+    subtotal,
+    deliveryFee: finalDeliveryFee,
+    gst,
+    discount,
+    grandTotal
+  };
+
+
+
+  //   Coupon codes (case-insensitive):
+  //  *     - "FIRST50"  => 50% off subtotal, max Rs 150 (use Math.min)
+  //  *     - "FLAT100"  => flat Rs 100 off
+  //  *     - "FREESHIP" => delivery fee becomes 0 (discount = original delivery fee value)
+  //  *     - null/undefined/invalid string => no discount (0)
 }

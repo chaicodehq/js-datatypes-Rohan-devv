@@ -41,5 +41,112 @@
  *   // => { name: "Priya", totalMarks: 63, percentage: 31.5, grade: "F", ... }
  */
 export function generateReportCard(student) {
-  // Your code here
+
+  // Validation
+  if (typeof student !== "object" || student === null) return null;
+
+  if (typeof student.name !== "string" || student.name.trim() === "")
+    return null;
+
+  if (typeof student.marks !== "object" || student.marks === null) return null;
+
+  if (
+    Object.keys(student.marks).length === 0 ||
+    !Object.values(student.marks).every((marks) => {
+      return typeof marks === "number" && marks >= 0 && marks <= 100;
+    })
+  )
+    return null;
+
+     //totalMarks: sum of all marks (use reduce)
+
+     const marksArray = Object.values(student.marks)
+
+     let totalMarks = marksArray.reduce((acc, marks) => {
+      return acc + marks
+
+     },0)
+
+      // Percentage 
+     const numSubjects = Object.keys(student.marks).length
+     const percentage = parseFloat(((totalMarks/(numSubjects*100))*100).toFixed(2))
+
+     // Grade
+
+
+  let grade = ""
+  if(percentage >= 90) grade = "A+"
+  else if(percentage >= 80) grade = "A"
+  else if(percentage >= 70) grade = "B"
+  else if(percentage >= 60) grade = "C"
+  else if(percentage >= 40) grade = "D"
+  else  grade = "F"
+
+  // Highest and lowest Subject 
+
+//    highestSubject: subject name with highest marks (use Object.entries)
+//  *     - lowestSubject: subject name with lowest marks
+
+   let entries = Object.entries(student.marks)
+
+   let highest = entries[0];
+
+for (let [subject, marks] of entries) {
+  if (marks > highest[1]) {
+    highest = [subject, marks];
+  }
+}
+
+const highestSubject = highest[0];
+let lowest = entries[0];
+
+for (let [subject, marks] of entries) {
+  if (marks < lowest[1]) {
+    lowest = [subject, marks];
+  }
+}
+
+const lowestSubject = lowest[0];
+     
+     
+// - passedSubjects: array of subject names where marks >= 40 (use filter)
+//  *     - failedSubjects: array of subject names where marks < 40
+
+// [
+//   ["maths", 85],
+//   ["science", 92],
+//   ["english", 78]
+// ]
+
+const passedSubjects = entries.filter((entry) => {
+   return entry[1] >= 40
+}).map((subject) => {
+return subject[0]
+})
+
+
+const failedSubjects = entries.filter((entry) => {
+   return entry[1] < 40
+}).map((subject) => {
+return subject[0]
+})
+
+const subjectCount = Object.keys(student.marks).length
+
+
+return {
+  name: student.name,
+  totalMarks,
+  percentage,
+  grade,
+  highestSubject,
+  lowestSubject,
+  passedSubjects,
+  failedSubjects,
+  subjectCount
+
+}
+
+
+
 }
